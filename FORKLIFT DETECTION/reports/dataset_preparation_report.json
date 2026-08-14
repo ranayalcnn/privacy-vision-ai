@@ -1,0 +1,45 @@
+{
+  "source_input_images": {
+    "roboflow_forklift_v1": 4474,
+    "roboflow_warehouse": 5183,
+    "roboflow_1000ware": 1083,
+    "roboflow_loco": 1128,
+    "hf_forklift_object_detection": 421
+  },
+  "deduplication": {
+    "input_images": 12289,
+    "exact_duplicates_removed": 80,
+    "empty_target_images_removed": 4338,
+    "negative_images_retained": 500,
+    "near_duplicate_candidates_retained_for_manual_review": 4353,
+    "near_duplicates_removed_automatically": 0,
+    "unique_images": 7871
+  },
+  "split_images": {
+    "train": 6366,
+    "test": 757,
+    "val": 748
+  },
+  "class_instances": {
+    "forklift": 6389,
+    "person": 4466,
+    "pallet_truck": 717,
+    "pallet": 31206
+  },
+  "source_images_after_deduplication": {
+    "roboflow_forklift_v1": 4470,
+    "roboflow_warehouse": 976,
+    "roboflow_1000ware": 974,
+    "roboflow_loco": 1030,
+    "hf_forklift_object_detection": 421
+  },
+  "images_without_target_labels": 500,
+  "target_classes": [
+    "forklift",
+    "person",
+    "pallet",
+    "pallet_truck"
+  ],
+  "near_duplicate_hamming_threshold": 2,
+  "maximum_negative_images": 500
+}

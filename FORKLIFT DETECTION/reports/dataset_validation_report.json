@@ -1,0 +1,28 @@
+{
+  "valid": true,
+  "errors": [],
+  "warnings": [],
+  "splits": {
+    "train": {
+      "images": 6366,
+      "labels": 6366,
+      "empty_labels": 411
+    },
+    "val": {
+      "images": 748,
+      "labels": 748,
+      "empty_labels": 43
+    },
+    "test": {
+      "images": 757,
+      "labels": 757,
+      "empty_labels": 46
+    }
+  },
+  "class_instances": {
+    "forklift": 6389,
+    "person": 4466,
+    "pallet": 31206,
+    "pallet_truck": 717
+  }
+}

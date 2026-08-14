@@ -1,0 +1,751 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Fotoğraf, video veya kamera görüntülerini KVKK odaklı yapay zekâ araçlarıyla analiz edin."
+    />
+    <title>Vispection AI · Güvenli Görüntü Analizi</title>
+    <script>
+      (() => {
+        const saved = localStorage.getItem("vispection_theme");
+        const preferred = window.matchMedia("(prefers-color-scheme: dark)").matches
+          ? "dark"
+          : "light";
+        document.documentElement.dataset.theme = saved || preferred;
+      })();
+    </script>
+    <link rel="stylesheet" href="/static/styles.css?v=20260804-3" />
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="/" aria-label="Vispection AI ana sayfa">
+        <span class="brand-mark" aria-hidden="true">
+          <img class="brand-icon brand-icon-light" src="/static/assets/brand-owl-light.webp" alt="" width="48" height="48" />
+          <img class="brand-icon brand-icon-dark" src="/static/assets/brand-owl-dark.webp" alt="" width="48" height="48" />
+          <span class="brand-icon-scan"></span>
+        </span>
+        <span class="brand-copy">
+          <strong>Vispection AI</strong>
+          <small data-i18n="brand_tagline">Güvenli görüntü analizi</small>
+        </span>
+      </a>
+
+      <div class="header-actions">
+        <nav class="header-nav" aria-label="Ana menü">
+          <button id="dashboard-button" class="header-button" type="button" data-i18n="dashboard">Kontrol paneli</button>
+          <button id="help-button" class="header-button" type="button" data-i18n="help">Yardım</button>
+          <a class="docs-link" href="/docs" data-i18n="api_docs">API dokümanı</a>
+        </nav>
+        <div class="header-controls">
+          <span id="header-status" class="status-badge" role="status" aria-live="polite">
+            <span class="status-dot" aria-hidden="true"></span>
+            <span id="header-status-text">Modeller hazırlanıyor</span>
+          </span>
+          <label class="language-control" for="language-select">
+            <span class="sr-only">Dil seçimi</span>
+            <select id="language-select" aria-label="Dil seçimi">
+              <option value="tr">TR</option>
+              <option value="en">EN</option>
+            </select>
+          </label>
+          <button id="theme-button" class="theme-button" type="button" aria-label="Koyu temaya geç">
+            <span id="theme-icon" aria-hidden="true">◐</span>
+            <span id="theme-label">Koyu tema</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="intro">
+        <p class="eyebrow" data-i18n="intro_eyebrow">Güvenli görüntü analizi</p>
+        <h1 data-i18n="intro_title">Görüntünüzü güvenle analiz edin.</h1>
+        <p data-i18n="intro_description">Bir araç seçin; fotoğraf, video veya canlı kamera görüntüsünü aynı ekranda işleyin.</p>
+      </section>
+
+      <section class="quick-guide" aria-labelledby="workflow-title">
+        <div class="quick-guide-title">
+          <span data-i18n="how_to">Nasıl kullanılır?</span>
+          <strong id="workflow-title" data-i18n="three_steps">3 kısa adım</strong>
+        </div>
+        <ol class="steps" aria-label="İşlem adımları">
+          <li class="active" aria-current="step"><span>1</span><strong data-i18n="step_tool">Aracı seçin</strong></li>
+          <li><span>2</span><strong data-i18n="step_source">Görüntüyü ekleyin</strong></li>
+          <li><span>3</span><strong data-i18n="step_result">Sonucu alın</strong></li>
+        </ol>
+      </section>
+
+      <section class="app-shell">
+        <aside class="tool-panel" aria-labelledby="operation-title">
+          <div class="panel-label">
+            <span data-i18n="analysis_tools">Analiz araçları</span>
+            <span class="panel-label-actions">
+              <span class="tool-count" data-i18n="five_tools">5 araç</span>
+              <button id="tool-info-button" class="info-button" type="button" aria-label="Araçlar hakkında bilgi">?</button>
+            </span>
+          </div>
+          <h2 id="operation-title" data-i18n="choose_operation">Yapmak istediğiniz işlemi seçin</h2>
+
+          <div class="operation-list" role="radiogroup" aria-label="Analiz aracı seçimi">
+            <button class="operation-card selected" type="button" role="radio" aria-checked="true" data-operation="privacy">
+              <span class="operation-icon privacy-icon" aria-hidden="true">◎</span>
+              <span class="operation-copy">
+                <strong>Yüzleri anonimleştir</strong>
+                <small>Yüzleri güvenli biçimde gizler.</small>
+              </span>
+              <span class="choice-indicator" aria-hidden="true"></span>
+            </button>
+
+            <button class="operation-card" type="button" role="radio" aria-checked="false" data-operation="people_blur">
+              <span class="operation-icon people-icon" aria-hidden="true">≋</span>
+              <span class="operation-copy">
+                <strong>Kişileri bulanıklaştır</strong>
+                <small>Vücutları şekline uygun gizler.</small>
+              </span>
+              <span class="choice-indicator" aria-hidden="true"></span>
+            </button>
+
+            <button class="operation-card" type="button" role="radio" aria-checked="false" data-operation="people_remove">
+              <span class="operation-icon remove-icon" aria-hidden="true">−</span>
+              <span class="operation-copy">
+                <strong>Kişileri kaldır</strong>
+                <small>Kişileri görüntüden temizler.</small>
+              </span>
+              <span class="choice-indicator" aria-hidden="true"></span>
+            </button>
+
+            <button class="operation-card" type="button" role="radio" aria-checked="false" data-operation="forklift">
+              <span class="operation-icon forklift-icon" aria-hidden="true">▦</span>
+              <span class="operation-copy">
+                <strong>Depo nesnelerini tespit et</strong>
+                <small>Forklift, kişi ve paletleri bulur.</small>
+              </span>
+              <span class="choice-indicator" aria-hidden="true"></span>
+            </button>
+
+            <button class="operation-card" type="button" role="radio" aria-checked="false" data-operation="pose">
+              <span class="operation-icon pose-icon" aria-hidden="true">⌁</span>
+              <span class="operation-copy">
+                <strong>Vücut duruşunu analiz et</strong>
+                <small>Vücut eklemlerini görselleştirir.</small>
+              </span>
+              <span class="choice-indicator" aria-hidden="true"></span>
+            </button>
+          </div>
+
+        </aside>
+
+        <section class="work-panel" aria-labelledby="active-operation-title">
+          <div class="work-header">
+            <div>
+              <span class="work-kicker" data-i18n="selected_tool">Seçili araç</span>
+              <h2 id="active-operation-title">Yüzleri anonimleştir</h2>
+              <p id="active-operation-description">
+                Fotoğraf veya videodaki yüzleri otomatik olarak algılar ve gizler.
+              </p>
+            </div>
+            <span class="privacy-pill" data-i18n="no_storage">Kalıcı kayıt yok</span>
+          </div>
+
+          <div class="system-health" role="status" aria-live="polite">
+            <span class="system-health-indicator" aria-hidden="true"></span>
+            <div>
+              <strong id="model-status-title">Modeller hazırlanıyor</strong>
+              <small id="model-status-detail">Analiz araçları arka planda başlatılıyor.</small>
+            </div>
+            <span id="model-status-count">0 / 4</span>
+          </div>
+
+          <div class="source-control" role="group" aria-label="Görüntü kaynağı">
+            <button class="source-button active" type="button" aria-pressed="true" data-source="file">
+              <span aria-hidden="true">↑</span>
+              <span data-i18n="upload_file">Dosya yükle</span>
+            </button>
+            <button class="source-button" type="button" aria-pressed="false" data-source="camera">
+              <span aria-hidden="true">●</span>
+              <span data-i18n="use_camera">Kameradan çek</span>
+            </button>
+          </div>
+
+          <button
+            id="sample-video-button"
+            class="sample-video-card"
+            type="button"
+            aria-describedby="sample-video-description"
+          >
+            <span class="sample-video-preview" aria-hidden="true">
+              <video
+                id="sample-video-preview"
+                src="/static/samples/people-demo.mp4"
+                muted
+                loop
+                playsinline
+                preload="metadata"
+              ></video>
+              <span class="sample-video-play">▶</span>
+            </span>
+            <span class="sample-video-copy">
+              <strong data-i18n="try_demo">Örnek videoyla dene</strong>
+              <small id="sample-video-description">Yüz gizleme aracını hazır bir insan videosunda deneyin.</small>
+            </span>
+            <span class="sample-video-badge">5 sn demo</span>
+          </button>
+
+          <div
+            id="dropzone"
+            class="dropzone"
+            role="button"
+            tabindex="0"
+            aria-label="Fotoğraf veya video seçmek için tıklayın ya da dosyayı buraya bırakın"
+          >
+            <input
+              id="file-input"
+              type="file"
+              multiple
+              accept="image/jpeg,image/png,image/webp,video/mp4,video/quicktime,video/x-msvideo,video/webm"
+              hidden
+            />
+
+            <div id="empty-upload" class="empty-upload">
+              <span class="upload-symbol" aria-hidden="true">↑</span>
+              <strong data-i18n="drop_files">Dosyalarınızı buraya bırakın</strong>
+              <p data-i18n="upload_limit">En fazla 10 fotoğrafı birlikte veya tek bir videoyu seçebilirsiniz.</p>
+              <button id="choose-button" class="secondary-button" type="button">
+                <span data-i18n="choose_file">Dosya seç</span>
+              </button>
+              <small data-i18n="supported_files">JPG, PNG, WebP · MP4, MOV, AVI, WebM · Çoklu seçim desteklenir</small>
+            </div>
+
+            <div id="preview-wrap" class="preview-wrap" hidden>
+              <img id="preview-image" alt="Seçilen görüntünün önizlemesi" />
+              <video id="preview-video" controls playsinline hidden></video>
+              <canvas id="result-canvas" hidden></canvas>
+              <div id="removal-target-options" class="removal-target-options" hidden>
+                <div class="removal-target-copy">
+                  <strong data-i18n="removal_target_title">Kim kaldırılacak?</strong>
+                  <small id="removal-target-help" data-i18n="removal_target_all_help">Videodaki tüm kişiler kaldırılır.</small>
+                </div>
+                <div class="removal-target-control" role="group" aria-label="Kaldırılacak kişileri seçin">
+                  <button class="active" type="button" data-removal-target="all" aria-pressed="true">
+                    <span aria-hidden="true">◎</span>
+                    <span data-i18n="remove_everyone">Tüm kişileri kaldır</span>
+                  </button>
+                  <button
+                    type="button"
+                    data-removal-target="selected"
+                    aria-pressed="false"
+                    title="Videoyu ilk karede durdurup kişinin gövdesine dokunun"
+                  >
+                    <span aria-hidden="true">⌖</span>
+                    <span data-i18n="remove_selected">Bir kişi seç</span>
+                  </button>
+                </div>
+              </div>
+              <button
+                id="person-selection-overlay"
+                class="person-selection-overlay"
+                type="button"
+                aria-label="Kaldırılacak kişiyi görüntüden seçin"
+                hidden
+              >
+                <span id="person-selection-hint">İpucu: Kişinin gövdesinin ortasına dokunun</span>
+                <i id="person-selection-marker" aria-hidden="true"></i>
+              </button>
+              <div id="preview-progress" class="preview-progress" role="status" aria-live="polite" hidden>
+                <div class="preview-progress-copy">
+                  <span class="preview-progress-spinner" aria-hidden="true"></span>
+                  <div>
+                    <strong>Video işleniyor</strong>
+                    <small id="preview-progress-detail">Video hazırlanıyor…</small>
+                  </div>
+                  <strong id="preview-progress-value">0%</strong>
+                </div>
+                <div
+                  id="preview-progress-track"
+                  class="preview-progress-track"
+                  role="progressbar"
+                  aria-label="Video işleme ilerlemesi"
+                  aria-valuemin="0"
+                  aria-valuemax="100"
+                  aria-valuenow="0"
+                >
+                  <span id="preview-progress-bar"></span>
+                </div>
+                <button id="preview-cancel-job-button" class="preview-cancel-button" type="button">
+                  İşlemi iptal et
+                </button>
+              </div>
+              <button id="remove-button" class="replace-button" type="button">
+                <span data-i18n="replace_file">Dosyayı değiştir</span>
+              </button>
+            </div>
+          </div>
+
+          <div id="upload-queue" class="upload-queue" aria-label="Seçilen dosyalar" hidden></div>
+
+          <div id="camera-panel" class="camera-panel" hidden>
+            <video id="camera-video" autoplay muted playsinline hidden></video>
+            <canvas id="camera-canvas" hidden></canvas>
+            <div id="live-status" class="live-status" hidden>
+              <span aria-hidden="true"></span>
+              <strong data-i18n="live_analysis">Canlı analiz</strong>
+              <small id="live-frame-count">0 kare</small>
+              <div id="camera-quality-alert" class="camera-quality-alert" role="alert" hidden>
+                <b aria-hidden="true">!</b>
+                <small id="camera-quality-alert-text"></small>
+              </div>
+            </div>
+            <div class="camera-empty" id="camera-empty">
+              <span class="camera-symbol" aria-hidden="true">●</span>
+              <strong data-i18n="camera_off">Kamera kapalı</strong>
+              <p data-i18n="camera_permission">Başlattığınızda tarayıcınız kamera izni isteyecektir.</p>
+            </div>
+            <div class="camera-actions">
+              <select
+                id="camera-select"
+                class="camera-select"
+                aria-label="Ön veya arka kamerayı seçin"
+                title="Kullanmak istediğiniz kamerayı seçin"
+                hidden
+              ></select>
+              <button id="start-camera-button" class="secondary-button inverse" type="button">
+                <span data-i18n="open_camera">Kamerayı aç</span>
+              </button>
+              <button id="capture-button" class="capture-button" type="button" hidden>
+                <span aria-hidden="true"></span>
+                <span data-i18n="take_photo">Fotoğraf çek</span>
+              </button>
+              <button id="live-analysis-button" class="live-button" type="button" hidden>
+                <span data-i18n="start_live">Canlı analizi başlat</span>
+              </button>
+            </div>
+          </div>
+
+          <div id="privacy-options" class="options-panel contextual-options" hidden>
+            <div>
+              <strong data-i18n="privacy_method_title">Yüzlerin nasıl gizleneceğini seçin</strong>
+              <span data-i18n="privacy_method_help">Bu ayar yalnızca yüz anonimleştirme işleminde kullanılır.</span>
+            </div>
+            <div class="segmented-control" role="group" aria-label="Yüz gizleme yöntemi">
+              <button class="mode-button active" type="button" aria-pressed="true" data-mode="soft_blur">
+                <span data-i18n="blur">Bulanıklaştır</span>
+              </button>
+              <button class="mode-button" type="button" aria-pressed="false" data-mode="mosaic">
+                <span data-i18n="mosaic">Mozaik uygula</span>
+              </button>
+              <button class="mode-button" type="button" aria-pressed="false" data-mode="color_shield">
+                <span data-i18n="color_shield">Renkle kapat</span>
+              </button>
+            </div>
+            <div id="gesture-control-row" class="gesture-control-row" hidden>
+              <div>
+                <strong data-i18n="gesture_control">El hareketiyle kontrol</strong>
+                <span data-i18n="gesture_control_help">Canlı kamerada sıkıştırma hareketiyle blur'u açıp kapatın.</span>
+              </div>
+              <label class="gesture-switch" for="gesture-control-toggle">
+                <input id="gesture-control-toggle" type="checkbox" role="switch" aria-label="El hareketiyle blur kontrolü" />
+                <span aria-hidden="true"></span>
+              </label>
+              <small id="gesture-status" class="gesture-status" role="status" aria-live="polite" data-i18n="gesture_ready">Kapalı</small>
+            </div>
+          </div>
+
+          <div class="advanced-settings">
+            <button
+              id="advanced-toggle"
+              class="advanced-toggle"
+              type="button"
+              aria-expanded="false"
+              aria-controls="advanced-panel"
+            >
+              <span class="advanced-toggle-icon" aria-hidden="true">☷</span>
+              <span>
+                <strong data-i18n="advanced_settings">Gelişmiş ayarlar</strong>
+                <small data-i18n="advanced_help">Hassasiyet ve canlı analiz akıcılığı</small>
+              </span>
+              <span id="advanced-chevron" class="advanced-chevron" aria-hidden="true">⌄</span>
+            </button>
+
+            <div id="advanced-panel" class="advanced-panel" hidden>
+              <div class="setting-row sensitivity-setting" hidden>
+                <div>
+                  <label for="confidence-range" data-i18n="sensitivity">Algılama hassasiyeti</label>
+                  <small data-i18n="sensitivity_help">Düşük değer daha çok nesne bulur; yanlış tespit ihtimali artabilir.</small>
+                </div>
+                <div class="range-control">
+                  <strong id="confidence-value">30%</strong>
+                  <input id="confidence-range" type="range" min="10" max="90" step="5" value="30" />
+                </div>
+              </div>
+              <div class="setting-row">
+                <div>
+                  <span class="setting-label" data-i18n="live_performance">Canlı analiz akıcılığı</span>
+                  <small data-i18n="live_performance_help">Düşük donanımlı cihazlarda “Ekonomik” seçeneğini kullanın.</small>
+                </div>
+                <div class="profile-control" role="group" aria-label="Canlı analiz akıcılığı">
+                  <button type="button" data-profile="eco" aria-pressed="false" data-i18n="eco">Ekonomik</button>
+                  <button class="active" type="button" data-profile="balanced" aria-pressed="true" data-i18n="balanced">Dengeli</button>
+                  <button type="button" data-profile="detail" aria-pressed="false" data-i18n="detailed">Detaylı</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="action-bar">
+            <div id="file-meta" class="file-meta">
+              <strong data-i18n="no_file">Henüz dosya seçilmedi</strong>
+              <span data-i18n="file_limits">Fotoğraf en fazla 10 MB, video en fazla 250 MB olabilir.</span>
+            </div>
+            <button id="process-button" class="primary-button" type="button" disabled>
+              <span class="button-label">Yüzleri anonimleştir</span>
+              <span class="button-arrow" aria-hidden="true">→</span>
+            </button>
+          </div>
+
+          <div id="progress-panel" class="progress-panel" role="status" aria-live="polite" hidden>
+            <div class="progress-header">
+              <span id="progress-icon" class="progress-icon" aria-hidden="true">↻</span>
+              <div>
+                <strong id="progress-title" data-i18n="progress_video">Video işleniyor</strong>
+                <span id="progress-detail" data-i18n="progress_frames">Kareler analiz ediliyor…</span>
+              </div>
+              <strong id="progress-value" class="progress-value">0%</strong>
+            </div>
+            <div
+              id="progress-track"
+              class="progress-track"
+              role="progressbar"
+              aria-label="Analiz ilerlemesi"
+              aria-valuemin="0"
+              aria-valuemax="100"
+              aria-valuenow="0"
+            >
+              <span id="progress-bar"></span>
+            </div>
+            <div class="progress-footer">
+              <span id="progress-file" data-i18n="progress_preparing">Dosya hazırlanıyor</span>
+              <button id="cancel-job-button" class="text-button danger" type="button" hidden>
+                <span data-i18n="cancel">İşlemi iptal et</span>
+              </button>
+            </div>
+          </div>
+
+          <div id="message" class="message" role="status" aria-live="polite"></div>
+        </section>
+      </section>
+
+      <section id="result-section" class="result-section" aria-labelledby="result-title" hidden>
+        <div class="result-heading">
+          <div class="result-title-group">
+            <span class="result-check" aria-hidden="true">✓</span>
+            <div>
+            <p class="eyebrow" data-i18n="analysis_complete">Analiz tamamlandı</p>
+            <h2 id="result-title" data-i18n="result_ready">Sonucunuz hazır</h2>
+            <p data-i18n="result_help">İşlenmiş görüntüyü kontrol edebilir veya cihazınıza indirebilirsiniz.</p>
+            </div>
+          </div>
+          <span id="result-summary" class="result-summary"></span>
+        </div>
+
+        <div class="result-layout">
+          <div class="result-preview-card">
+            <div class="result-preview-topbar">
+              <span><i aria-hidden="true"></i> <span data-i18n="processed_result">İşlenmiş sonuç</span></span>
+              <small data-i18n="secure_preview">Güvenli önizleme</small>
+            </div>
+            <div class="result-preview-media">
+              <img id="result-preview-image" alt="İşlenmiş sonucun önizlemesi" hidden />
+              <video id="result-preview-video" controls playsinline hidden></video>
+            </div>
+          </div>
+
+          <div class="result-details">
+            <div class="result-insights">
+              <article>
+                <span data-i18n="applied_operation">Uygulanan işlem</span>
+                <strong id="result-operation">—</strong>
+              </article>
+              <article>
+                <span data-i18n="content_type">İçerik türü</span>
+                <strong id="result-media-type">—</strong>
+              </article>
+              <article class="result-insight-highlight">
+                <span data-i18n="analysis_summary">Analiz özeti</span>
+                <strong id="result-metric">—</strong>
+              </article>
+            </div>
+
+            <section class="result-technical" aria-labelledby="result-technical-title">
+              <div class="result-technical-heading">
+                <div>
+                  <span class="result-detail-icon" aria-hidden="true">i</span>
+                  <strong id="result-technical-title" data-i18n="processing_details">İşlem ayrıntıları</strong>
+                </div>
+                <small data-i18n="completed_securely">Güvenli biçimde tamamlandı</small>
+              </div>
+              <dl class="result-detail-grid">
+                <div>
+                  <dt data-i18n="total_duration">Toplam süre</dt>
+                  <dd id="result-duration">—</dd>
+                </div>
+                <div>
+                  <dt data-i18n="model_duration">Model süresi</dt>
+                  <dd id="result-server-time">—</dd>
+                </div>
+                <div>
+                  <dt data-i18n="sensitivity">Hassasiyet</dt>
+                  <dd id="result-confidence">—</dd>
+                </div>
+                <div>
+                  <dt data-i18n="file_size">Dosya boyutu</dt>
+                  <dd id="result-file-size">—</dd>
+                </div>
+                <div>
+                  <dt data-i18n="applied_mode">Uygulanan mod</dt>
+                  <dd id="result-mode">—</dd>
+                </div>
+                <div>
+                  <dt data-i18n="processing_speed">İşleme hızı</dt>
+                  <dd id="result-throughput">—</dd>
+                </div>
+              </dl>
+            </section>
+
+            <div id="detection-list" class="detection-list" hidden></div>
+
+            <div class="result-actions">
+              <a id="download-button" class="primary-button compact" download="islenmis-goruntu.jpg">
+                <span data-i18n="download_result">Sonucu indir</span>
+              </a>
+              <button id="new-button" class="secondary-button" type="button">
+                <span data-i18n="new_analysis">Yeni analiz başlat</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div id="batch-results" class="batch-results" hidden>
+          <div class="batch-results-heading">
+            <div>
+              <span class="eyebrow" data-i18n="batch">Toplu işlem</span>
+              <h3 data-i18n="batch_ready">Dosyalarınız hazır</h3>
+            </div>
+            <span id="batch-result-count"></span>
+          </div>
+          <div id="batch-result-list" class="batch-result-list"></div>
+        </div>
+      </section>
+
+      <section class="learn-section" aria-labelledby="learn-title">
+        <div class="learn-heading">
+          <div>
+            <p class="eyebrow" data-i18n="learn_eyebrow">Sistemi tanıyın</p>
+            <h2 id="learn-title" data-i18n="learn_title">Sistem hakkında kısa bilgiler</h2>
+          </div>
+          <p data-i18n="learn_intro">Merak ettiğiniz konuya dokunarak ayrıntıları görüntüleyin.</p>
+        </div>
+        <div class="learn-grid">
+          <button class="learn-card" type="button" data-info-topic="privacy">
+            <span class="learn-card-icon" aria-hidden="true">01</span>
+            <span class="learn-card-copy">
+              <strong data-i18n="learn_privacy">Gizlilik nasıl korunuyor?</strong>
+              <small data-i18n="learn_privacy_short">Yüz ve kişi gizleme yöntemlerini öğrenin.</small>
+            </span>
+            <span class="learn-card-action" data-i18n="learn_more">Bilgi al →</span>
+          </button>
+          <button class="learn-card" type="button" data-info-topic="live">
+            <span class="learn-card-icon" aria-hidden="true">02</span>
+            <span class="learn-card-copy">
+              <strong data-i18n="learn_live">Canlı analiz nasıl çalışıyor?</strong>
+              <small data-i18n="learn_live_short">FPS, gecikme ve kamera akışını anlayın.</small>
+            </span>
+            <span class="learn-card-action" data-i18n="learn_more">Bilgi al →</span>
+          </button>
+          <button class="learn-card" type="button" data-info-topic="models">
+            <span class="learn-card-icon" aria-hidden="true">03</span>
+            <span class="learn-card-copy">
+              <strong data-i18n="learn_models">Hangi araç ne zaman seçilmeli?</strong>
+              <small data-i18n="learn_models_short">Beş analiz aracını doğru işle eşleştirin.</small>
+            </span>
+            <span class="learn-card-action" data-i18n="learn_more">Bilgi al →</span>
+          </button>
+        </div>
+      </section>
+
+      <section class="about-section" aria-labelledby="about-title">
+        <div class="about-intro">
+          <p class="eyebrow" data-i18n="about_eyebrow">Proje hakkında</p>
+          <h2 id="about-title" data-i18n="about_title">Gizliliği önceliklendiren görüntü analizi</h2>
+        </div>
+        <div class="about-grid">
+          <article class="company-card">
+            <span class="about-mark" aria-hidden="true">V</span>
+            <div>
+              <small data-i18n="company_label">Şirket</small>
+              <h3>Vispection AI</h3>
+              <p data-i18n="company_description">Vispection AI, görüntü analizini erişilebilir ve gizlilik odaklı hale getiren araçlar geliştirir.</p>
+              <a href="https://github.com/vispection" target="_blank" rel="noopener noreferrer" data-i18n="view_github">GitHub projesini görüntüle</a>
+            </div>
+          </article>
+          <article class="developer-card">
+            <span class="developer-avatar" aria-hidden="true">RY</span>
+            <div>
+              <small data-i18n="developer_label">Geliştirici</small>
+              <h3>Rana Yalçın</h3>
+              <p data-i18n="developer_role">Proje geliştiricisi</p>
+              <a href="mailto:ranayalcnn1@gmail.com" data-i18n="contact">İletişime geç</a>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="faq-section" aria-labelledby="faq-title">
+        <div class="faq-copy">
+          <p class="eyebrow" data-i18n="faq_eyebrow">Merak edilenler</p>
+          <h2 id="faq-title" data-i18n="faq_title">Sık sorulan sorular</h2>
+          <p data-i18n="faq_intro">Kullanım ve gizlilik hakkında kısa cevaplar.</p>
+        </div>
+        <div class="faq-list">
+          <details>
+            <summary data-i18n="faq_storage_q">Görüntülerim kalıcı olarak saklanıyor mu?</summary>
+            <p data-i18n="faq_storage_a">Hayır. İşlem dosyaları sonuç üretildikten sonra temizlenir; tamamlanan video işleri de süre sonunda otomatik kaldırılır.</p>
+          </details>
+          <details>
+            <summary data-i18n="faq_video_q">Fotoğraf dışında video kullanabilir miyim?</summary>
+            <p data-i18n="faq_video_a">Evet. MP4, MOV, AVI ve WebM videolarını yükleyebilir veya hazır demo videolarıyla sistemi deneyebilirsiniz.</p>
+          </details>
+          <details>
+            <summary data-i18n="faq_camera_q">Canlı kamera analizi ne işe yarar?</summary>
+            <p data-i18n="faq_camera_a">Kameradan gelen görüntüyü seçili araçla aralıklı olarak işler ve sonucu canlı şekilde gösterir.</p>
+          </details>
+          <details>
+            <summary data-i18n="faq_security_q">Yüklenen dosyalar nasıl güvenli tutuluyor?</summary>
+            <p data-i18n="faq_security_a">Dosya türü, gerçek içerik imzası, boyut, çözünürlük ve video süresi sunucuda doğrulanır. Geçici dosyalar rastgele adlandırılır ve süre sonunda silinir.</p>
+          </details>
+          <details>
+            <summary data-i18n="faq_api_q">API kötüye kullanıma karşı korunuyor mu?</summary>
+            <p data-i18n="faq_api_a">İstek hızı ve eşzamanlı video işleri sınırlandırılır. İnternete açık kullanımda ayrıca API anahtarı etkinleştirilebilir.</p>
+          </details>
+        </div>
+      </section>
+
+      <section class="trust-strip" aria-label="Gizlilik ve kullanım bilgileri">
+        <article>
+          <span>01</span>
+          <div><strong data-i18n="no_recording">Görüntü kaydı yok</strong><small data-i18n="no_recording_help">Ham dosyanız kalıcı olarak saklanmaz.</small></div>
+        </article>
+        <article>
+          <span>02</span>
+          <div><strong data-i18n="kvkk_design">KVKK odaklı tasarım</strong><small data-i18n="kvkk_design_help">Kişisel verileri korumaya öncelik verir.</small></div>
+        </article>
+        <article>
+          <span>03</span>
+          <div><strong data-i18n="one_screen">Tek ekranda kullanım</strong><small data-i18n="one_screen_help">Teknik bilgi gerektirmeden sonuç alın.</small></div>
+        </article>
+        <article>
+          <span>04</span>
+          <div><strong data-i18n="verified_upload">Doğrulanmış yükleme</strong><small data-i18n="verified_upload_help">Tür, boyut, çözünürlük ve süre sunucuda kontrol edilir.</small></div>
+        </article>
+      </section>
+    </main>
+
+    <footer>
+      <div class="footer-copy">
+        <strong>Vispection AI</strong>
+        <span data-i18n="footer_copy">© 2026 · Güvenli görüntü analizi için geliştirildi.</span>
+      </div>
+      <nav class="footer-socials" aria-label="Sosyal bağlantılar">
+        <a
+          href="https://github.com/vispection/KVKK_Safe_Human_Analysis"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Vispection AI projesini GitHub'da aç"
+        >
+          <span aria-hidden="true">GH</span>
+          GitHub
+        </a>
+        <a
+          href="https://www.linkedin.com/company/vispection"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Vispection LinkedIn sayfasını aç"
+        >
+          <span class="linkedin-mark" aria-hidden="true">in</span>
+          LinkedIn
+        </a>
+      </nav>
+    </footer>
+
+    <dialog id="welcome-dialog" class="modal welcome-modal">
+      <button class="modal-close" type="button" data-close-dialog aria-label="Pencereyi kapat">×</button>
+      <span class="modal-badge" data-i18n="welcome">Hoş geldiniz</span>
+      <h2 data-i18n="welcome_title">İlk analizinizi üç adımda tamamlayın</h2>
+      <p data-i18n="welcome_intro">Bir araç seçin, kendi görüntünüzü ekleyin veya örnek videoyu kullanın. Ham dosyanız kalıcı olarak saklanmaz.</p>
+      <ol class="welcome-steps">
+        <li><span>1</span><div><strong data-i18n="welcome_tool">Analiz aracını seçin</strong><small data-i18n="welcome_tool_help">İhtiyacınıza uygun beş araçtan birini kullanın.</small></div></li>
+        <li><span>2</span><div><strong data-i18n="welcome_media">Görüntüyü ekleyin</strong><small data-i18n="welcome_media_help">Dosya yükleyin, kamerayı açın veya hazır demoyu seçin.</small></div></li>
+        <li><span>3</span><div><strong data-i18n="welcome_result">Sonucu kontrol edin</strong><small data-i18n="welcome_result_help">İşlenmiş çıktıyı görüntüleyin ve indirin.</small></div></li>
+      </ol>
+      <button id="welcome-start-button" class="primary-button modal-primary" type="button">
+        <span data-i18n="start_analysis">Analize başla</span>
+      </button>
+    </dialog>
+
+    <dialog id="tool-dialog" class="modal">
+      <button class="modal-close" type="button" data-close-dialog aria-label="Pencereyi kapat">×</button>
+      <span class="modal-badge" data-i18n="tool_guide">Araç rehberi</span>
+      <h2 data-i18n="tool_guide_title">Hangi araç ne işe yarar?</h2>
+      <div class="tool-guide">
+        <article><strong data-operation-copy="privacy">Yüzleri anonimleştir</strong><p data-i18n="privacy_guide">Kimliği belli eden yüz bölgelerini bulanıklaştırır, mozaikler veya renkle kapatır.</p></article>
+        <article><strong data-operation-copy="people_blur">Kişileri bulanıklaştır</strong><p data-i18n="blur_guide">Yalnızca yüzü değil, kişinin bütün vücudunu gizler.</p></article>
+        <article><strong data-operation-copy="people_remove">Kişileri kaldır</strong><p data-i18n="remove_guide">Kişiyi görüntüden siler. Karmaşık arka planlarda sonuç değişebilir.</p></article>
+        <article><strong data-operation-copy="forklift">Depo nesnelerini tespit et</strong><p data-i18n="forklift_guide">Forklift, kişi ve paletleri bulur; videoda nesneleri ByteTrack ile takip eder.</p></article>
+        <article><strong data-operation-copy="pose">Vücut duruşunu analiz et</strong><p data-i18n="pose_guide">Vücut eklemlerini görselleştirir; tıbbi değerlendirme amacı taşımaz.</p></article>
+      </div>
+    </dialog>
+
+    <dialog id="info-detail-dialog" class="modal info-detail-modal">
+      <button class="modal-close" type="button" data-close-dialog aria-label="Pencereyi kapat">×</button>
+      <span id="info-detail-badge" class="modal-badge"></span>
+      <h2 id="info-detail-title"></h2>
+      <p id="info-detail-description"></p>
+      <ul id="info-detail-list" class="info-detail-list"></ul>
+      <button class="secondary-button modal-primary" type="button" data-close-dialog data-i18n="close_info">Anladım</button>
+    </dialog>
+
+    <dialog id="dashboard-dialog" class="modal dashboard-modal">
+      <button class="modal-close" type="button" data-close-dialog aria-label="Pencereyi kapat">×</button>
+      <span class="modal-badge" data-i18n="local_dashboard">Yerel kontrol paneli</span>
+      <h2 data-i18n="dashboard_summary">Analiz özeti</h2>
+      <p class="modal-description" data-i18n="dashboard_privacy">Bu bilgiler yalnızca bu tarayıcıda tutulur; görüntüler geçmişe kaydedilmez.</p>
+      <div class="dashboard-cards">
+        <article><span data-i18n="total_analysis">Toplam analiz</span><strong id="stat-total">0</strong></article>
+        <article><span data-i18n="today_analysis">Bugünkü analiz</span><strong id="stat-today">0</strong></article>
+        <article><span data-i18n="video_analysis">Video analizi</span><strong id="stat-video">0</strong></article>
+      </div>
+      <div class="dashboard-grid">
+        <section>
+          <div class="dashboard-heading"><h3 data-i18n="tool_usage">Araç kullanımı</h3></div>
+          <div id="operation-chart" class="operation-chart"></div>
+        </section>
+        <section>
+          <div class="dashboard-heading">
+            <h3 data-i18n="recent_analysis">Son analizler</h3>
+            <button id="clear-history-button" class="text-button danger" type="button" data-i18n="clear_history">Geçmişi temizle</button>
+          </div>
+          <div id="history-list" class="history-list"></div>
+        </section>
+      </div>
+    </dialog>
+
+    <div id="toast" class="toast" role="status" aria-live="polite" hidden>
+      <span id="toast-icon">✓</span>
+      <div><strong id="toast-title"></strong><p id="toast-message"></p></div>
+    </div>
+
+    <script src="/static/app.js?v=20260804-4" defer></script>
+  </body>
+</html>

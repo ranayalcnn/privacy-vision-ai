@@ -1,0 +1,111 @@
+# Python environments and caches
+.venv/
+.venv-*/
+venv/
+env/
+**/.venv/
+__pycache__/
+**/__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.hypothesis/
+.tox/
+.nox/
+.ipynb_checkpoints/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+build/
+dist/
+*.egg-info/
+
+# Editors and operating-system files
+.idea/
+.vscode/
+*.code-workspace
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Local development-tool metadata
+.codex/
+.agents/
+.cache/
+.presentation-*/
+
+# Local presentation deliverables (do not publish to GitHub)
+/Vispection_AI_Proje_Sunumu*.pptx
+/Sunum_Konusma_Metni*.md
+/~$*.pptx
+
+# Secrets and local configuration
+.env
+.env.*
+!.env.example
+*.pem
+*.p12
+*.pfx
+secrets/
+
+# Trained model weights and exported inference engines
+*.pt
+*.pth
+*.onnx
+*.engine
+*.tflite
+
+# Required inference weights used by the web API
+!blur_and_segment/yolov8n-face.pt
+!blur_and_segment/yolo11s-seg.pt
+!blur_and_segment/yolo11n-pose.pt
+!FORKLIFT DETECTION/models/
+!FORKLIFT DETECTION/models/forklift_yolo11n_quick_best.pt
+!FORKLIFT DETECTION/models/forklift_yolo11s_multivideo_best.pt
+
+# Video and large downloadable archives
+*.mp4
+*.avi
+*.mov
+*.mkv
+*.webm
+*.m4v
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+!api/static/samples/
+!api/static/samples/*.mp4
+
+# Generated training/inference artifacts
+**/runs/
+**/outputs/
+**/wandb/
+**/mlruns/
+**/privacy_audit.jsonl
+*.log
+*.tmp
+*.bak
+*.pid
+.runtime/
+
+# Local datasets (retain lightweight provenance/readme files)
+FORKLIFT DETECTION/data/**
+!FORKLIFT DETECTION/data/**/
+!FORKLIFT DETECTION/data/**/README.md
+!FORKLIFT DETECTION/data/**/SOURCE.md
+!FORKLIFT DETECTION/data/**/SOURCES.md
+!FORKLIFT DETECTION/data/**/README.*.txt
+!FORKLIFT DETECTION/data/**/.gitkeep
+privacy_human_analysis/datasets/
+FORKLIFT DETECTION/tmp/
+
+# Recovered source module; keep only its former nested Git metadata out of GitHub
+/face-blur-and-tracking/.git.nested-backup/
+
+# Recoverable metadata backup from the formerly nested Forklift repository
+/FORKLIFT DETECTION/.git.nested-backup/

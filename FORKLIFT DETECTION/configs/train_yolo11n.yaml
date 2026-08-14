@@ -1,0 +1,15 @@
+model: yolo11n.pt
+data: configs/dataset.yaml
+epochs: 20
+fraction: 0.50
+imgsz: 416
+batch: 8
+patience: 8
+workers: 4
+seed: 42
+deterministic: true
+project: runs
+name: forklift_yolo11n_20epoch
+pretrained: false
+cache: false
+device: 0

@@ -1,0 +1,9 @@
+REAL-TIME PRIVACY PIPELINE REPORT
+
+Total processed frames: 1524
+Average FPS: 36.29
+Average latency: 21.59 ms
+Total detected faces: 1522
+Privacy active time: 39.50 seconds
+Last privacy mode: BLACK MASK
+Total runtime: 52.53 seconds

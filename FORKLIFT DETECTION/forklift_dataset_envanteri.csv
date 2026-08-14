@@ -1,0 +1,13 @@
+oncelik,dataset,platform,url,goruntu_sayisi,siniflar,lisans,kullanim_karari,not
+1,Forklift v1,Roboflow,https://universe.roboflow.com/forklift-4ulnu/forklift-uo0vm/dataset/1,4474,"forklift; person",Public Domain,Ana kaynak,"3132 train; 896 valid; 446 test"
+2,Warehouse,Roboflow,https://universe.roboflow.com/divya-tiwari-u2mrc/warehouse-vemit,5183,"forklift; person; palletjack; palletkack; pallets; stillage; a",Public Domain,Ana kaynak,"v3 model sürümü augmentasyonla 8655 görüntü gösteriyor"
+3,1000ware v4,Roboflow,https://universe.roboflow.com/veeck/1000ware/dataset/4,1083,"Box; ForkLift; Human; Pallet",Public Domain,Ana kaynak,"757 train; 222 valid; 104 test; proje genelinde 1276 görüntü görünüyor"
+4,LOCO v1,Roboflow,https://universe.roboflow.com/new-workspace-e6ojy/loco-foum7/dataset/1,1128,"Forklift; Pallet; Pallet_truck; Small_load_carrier; Stillage",Public Domain,Yardımcı kaynak,"788 train; 227 valid; 113 test; proje özeti 1075 görüntü gösteriyor"
+5,Forklift Object Detection,Hugging Face,https://huggingface.co/datasets/keremberke/forklift-object-detection,421,"forklift; person",CC BY 4.0,Ana kaynak,"295 train; 84 valid; 42 test"
+6,Fahrzeuge,Roboflow,https://universe.roboflow.com/test-workspace-2m4il/fahrzeuge-xxfte,800,forklift,Public Domain,Yardımcı kaynak,Kalite örneklemesi gerekli
+7,Forkliftdetection,Roboflow,https://universe.roboflow.com/opop/forkliftdetection,84,"forklift; person; forklift-side",Public Domain,Küçük yardımcı,Forklift-side sınıfı normalize edilmeli
+8,YOLO - forklift,Roboflow,https://universe.roboflow.com/rhenan-nfpl8/yolo-forklift,126,forklift,Public Domain,Küçük yardımcı,"v3 eğitim sürümü 116 görüntü"
+9,Industrial Object Detection,Kaggle,https://www.kaggle.com/datasets/walidguirat/industrial-object-detection,2173,"forklift; conveyor belt; industrial pallet; industrial shredder",Unknown,Lisans netleşmeden kullanma,"Forklift içeren 1325 görüntü"
+10,Forklift and People Detection,GitHub,https://github.com/SelimSavas/forklift-and-people-detection-with-YOLOv5,3000,"forklift; person",Belirtilmemiş,Lisans netleşmeden kullanma,"ImageNet Roboflow ve Kaggle derlemesi"
+11,SORDI.ai,SORDI/Kaggle,https://sordi.ai/home,1500000+,"çok sınıflı endüstriyel sentetik veri",Paket bazında kontrol edilmeli,Araştırılacak,Forklift alt kümesi sayısı ana sayfada belirtilmiyor
+12,DoFOS,Kaggle,https://www.kaggle.com/datasets/amirberenji/dofos-detection-of-forklift-operating-state/data,0,7 çalışma durumu,CC0-1.0,Görsel detection için kullanma,639 ivme zaman serisi gözlemi

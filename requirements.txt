@@ -1,0 +1,26 @@
+# Vispection AI - complete project environment (Python 3.11+)
+
+# Web API and uploads
+fastapi>=0.115,<1
+uvicorn[standard]>=0.30,<1
+python-multipart>=0.0.9,<1
+pydantic>=2.7,<3
+
+# Computer vision and model inference
+numpy>=1.26,<2
+opencv-contrib-python>=4.10,<4.12
+ultralytics>=8.3,<9
+lapx>=0.5.12,<1
+mediapipe==0.10.21
+Pillow>=10,<13
+
+# Video conversion
+imageio-ffmpeg>=0.6,<1
+
+# API and unit tests
+pytest>=8,<10
+httpx>=0.27,<1
+
+# Dataset preparation, zero-shot labelling and PDF reports
+transformers>=4.45,<5
+reportlab>=4.2,<5
