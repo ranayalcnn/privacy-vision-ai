@@ -57,6 +57,14 @@ python -m uvicorn api.main:app --reload --port 8000
 
 If port `8000` is unavailable, choose another port, for example `8001`.
 
+## Web interface
+
+The application includes a responsive web interface for uploading media, starting camera-based analysis, selecting privacy modes, monitoring video jobs, and reviewing processed results.
+
+After starting the server, open [http://127.0.0.1:8000](http://127.0.0.1:8000) in your browser.
+
+![Privacy Vision AI web interface](docs/images/interface-overview.png)
+
 ## Model assets
 
 The repository includes the model files required by the main workflows:
